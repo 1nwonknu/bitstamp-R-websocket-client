@@ -8,7 +8,6 @@ ws$onOpen(function(event) {
 })
 
 ws$onMessage(function(event) {
-  cat("Got client message", prettify(event$data))
   bts_data <- fromJSON(event$data)
   write.table(bts_data, 
               paste(bts_data$channel, ".csv", pate = "")
@@ -26,4 +25,15 @@ ws$onError(function(event) {
 ws$connect()
 
 
-js <- toJSON(list(event = "bts:subscribe", data = list(channel = "live_trades_btcusd")), pretty=TRUE, auto_unbox = TRUE)
+subscribe <- function(channel, instrument, currency) {
+  js <- toJSON(list(event = "bts:subscribe"
+              , data = list(channel = paste(channel
+              , "_"
+              , instrument, currency, sep="")))
+              , pretty=TRUE, auto_unbox = TRUE)
+  ws$send(js)
+}
+
+
+
+#js <- toJSON(list(event = "bts:subscribe", data = list(channel = "live_trades_btcusd")), pretty=TRUE, auto_unbox = TRUE)
